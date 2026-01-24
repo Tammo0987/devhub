@@ -1,8 +1,8 @@
-# Project Hub
+# DevHub
 
 A terminal UI project manager with git integration, built with Bun, SolidJS, and [@opentui/solid](https://github.com/anomalyco/opentui).
 
-![Project Hub TUI](https://img.shields.io/badge/TUI-Catppuccin%20Mocha-b4befe)
+![DevHub TUI](https://img.shields.io/badge/TUI-Catppuccin%20Mocha-b4befe)
 
 ## Features
 
@@ -25,7 +25,7 @@ bun install
 bun run build
 
 # Copy binary to PATH
-sudo cp dist/projecthub /usr/local/bin/
+sudo cp dist/devhub /usr/local/bin/
 ```
 
 ### Development
@@ -40,16 +40,16 @@ bun dev
 ### TUI Mode
 
 ```bash
-projecthub
+devhub
 ```
 
 ### CLI Commands
 
 ```bash
-projecthub add <path>    # Add all git repos inside a directory
-projecthub list          # List all projects
-projecthub remove <id>   # Remove a project by ID or name
-projecthub help          # Show help
+devhub add <path>    # Add all git repos inside a directory
+devhub list          # List all projects
+devhub remove <id>   # Remove a project by ID or name
+devhub help          # Show help
 ```
 
 ## Keybindings
@@ -86,7 +86,7 @@ projecthub help          # Show help
 
 ## Configuration
 
-Projects are stored at `~/.config/project-hub/projects.json`.
+Projects are stored at `~/.config/devhub/projects.json`.
 
 The editor is determined by `$EDITOR` environment variable.
 
@@ -98,3 +98,7 @@ The editor is determined by `$EDITOR` environment variable.
 - **UI Library**: [SolidJS](https://solidjs.com)
 - **Git**: [simple-git](https://github.com/steveukx/git-js)
 - **Theme**: [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)
+
+## License
+
+MIT

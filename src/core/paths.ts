@@ -4,9 +4,9 @@ import { join } from "path"
 export function getConfigDir(): string {
   const xdgConfig = process.env.XDG_CONFIG_HOME
   if (xdgConfig) {
-    return join(xdgConfig, "project-hub")
+    return join(xdgConfig, "devhub")
   }
-  return join(homedir(), ".config", "project-hub")
+  return join(homedir(), ".config", "devhub")
 }
 
 export function getProjectsPath(): string {

@@ -36,7 +36,7 @@ console.log(`Output: ${outdir}/index.js`)
 // Compile to standalone binary
 console.log("\nCompiling to standalone binary...")
 
-const proc = Bun.spawn(["bun", "build", "--compile", `${outdir}/index.js`, "--outfile", `${outdir}/projecthub`], {
+const proc = Bun.spawn(["bun", "build", "--compile", `${outdir}/index.js`, "--outfile", `${outdir}/devhub`], {
   stdout: "inherit",
   stderr: "inherit",
 })
@@ -44,7 +44,7 @@ const proc = Bun.spawn(["bun", "build", "--compile", `${outdir}/index.js`, "--ou
 await proc.exited
 
 if (proc.exitCode === 0) {
-  console.log(`Binary created: ${outdir}/projecthub`)
+  console.log(`Binary created: ${outdir}/devhub`)
 } else {
   console.error("Binary compilation failed")
   process.exit(1)

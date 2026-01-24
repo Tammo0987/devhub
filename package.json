@@ -1,11 +1,11 @@
 {
-  "name": "project-hub",
+  "name": "devhub",
   "version": "0.1.0",
-  "description": "A TUI project manager with session and git integration",
+  "description": "A TUI project manager with git integration",
   "type": "module",
   "main": "src/index.tsx",
   "bin": {
-    "projecthub": "./src/index.tsx"
+    "devhub": "./src/index.tsx"
   },
   "scripts": {
     "dev": "bun run src/index.tsx",
