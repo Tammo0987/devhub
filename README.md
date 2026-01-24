@@ -98,7 +98,3 @@ The editor is determined by `$EDITOR` environment variable.
 - **UI Library**: [SolidJS](https://solidjs.com)
 - **Git**: [simple-git](https://github.com/steveukx/git-js)
 - **Theme**: [Catppuccin Mocha](https://github.com/catppuccin/catppuccin)
-
-## License
-
-MIT
