@@ -20,7 +20,7 @@ A terminal UI project manager with git integration, built with Bun, SolidJS, and
 ```bash
 # Clone and build
 git clone <repo-url>
-cd project-hub
+cd devhub
 bun install
 bun run build
 
