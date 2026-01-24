@@ -1,0 +1,25 @@
+{
+  "name": "project-hub",
+  "version": "0.1.0",
+  "description": "A TUI project manager with session and git integration",
+  "type": "module",
+  "main": "src/index.tsx",
+  "bin": {
+    "projecthub": "./src/index.tsx"
+  },
+  "scripts": {
+    "dev": "bun run src/index.tsx",
+    "build": "bun run scripts/build.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@opentui/core": "^0.1.74",
+    "@opentui/solid": "^0.1.74",
+    "simple-git": "^3.27.0",
+    "solid-js": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}
