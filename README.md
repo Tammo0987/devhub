@@ -2,8 +2,6 @@
 
 A terminal UI project manager with git integration, built with Bun, SolidJS, and [@opentui/solid](https://github.com/anomalyco/opentui).
 
-![DevHub TUI](https://img.shields.io/badge/TUI-Catppuccin%20Mocha-b4befe)
-
 ## Features
 
 - **Project List** - View all your projects sorted by last accessed time
@@ -13,18 +11,18 @@ A terminal UI project manager with git integration, built with Bun, SolidJS, and
 - **Editor Integration** - Open projects in your `$EDITOR`
 - **Lazygit Integration** - Quick access to git operations
 
+![DevHub TUI](assets/devhub.png)
+
 ## Installation
 
 ### From Source
 
 ```bash
-# Clone and build
 git clone <repo-url>
 cd devhub
 bun install
-bun run build
+bun compile
 
-# Copy binary to PATH
 sudo cp dist/devhub /usr/local/bin/
 ```
 
@@ -33,6 +31,20 @@ sudo cp dist/devhub /usr/local/bin/
 ```bash
 bun install
 bun dev
+```
+
+### Using devenv
+
+This project includes a [devenv](https://devenv.sh) configuration that sets up all required dependencies.
+
+With direnv:
+```bash
+direnv allow
+```
+
+Without direnv:
+```bash
+devenv shell
 ```
 
 ## Usage
