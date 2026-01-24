@@ -9,7 +9,7 @@
   "main": "src/index.tsx",
   "scripts": {
     "dev": "bun run src/index.tsx",
-    "build": "bun run scripts/build.ts",
+    "compile": "bun run scripts/build.ts",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint .",
     "lint:fix": "oxlint --fix .",
