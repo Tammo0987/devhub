@@ -1,56 +1,34 @@
-import { createSignal, createMemo, Show } from "solid-js";
+import { createSignal, Show } from "solid-js";
 import { useKeyboard, useRenderer } from "@opentui/solid";
-import { ProjectList } from "./components/ProjectList";
-import { StatusBar } from "./components/StatusBar";
-import { Header } from "./components/Header";
-import { FileExplorer } from "./components/FileExplorer";
-import { useProjects } from "./hooks/useProjects";
-import { openInEditor, openLazygit } from "./core/editor";
 import {
-  getHomeDir,
-  listDirectory,
-  getParentDir,
-  joinPath,
-  deleteDirectory,
-} from "./core/filesystem";
+  ProjectList,
+  StatusBar,
+  Header,
+  FileExplorer,
+  SearchBar,
+  DeleteConfirm,
+} from "./components";
+import { useProjects, useFileExplorer, useSearch } from "./hooks";
+import { openInEditor, openLazygit } from "./core/editor";
+import { deleteDirectory } from "./core/filesystem";
 import { colors } from "./theme";
 
 type Mode = "normal" | "add" | "search" | "delete-confirm";
 
 export function App() {
-  const {
-    projects,
-    loading,
-    error,
-    refresh,
-    addProject,
-    addAllSubdirs,
-    removeProject,
-    updateLastAccessed,
-    clearError,
-  } = useProjects();
-  const [selectedIndex, setSelectedIndex] = createSignal(0);
+  const projects = useProjects();
+  const explorer = useFileExplorer();
+  const search = useSearch(projects.projects);
+  const renderer = useRenderer();
+
   const [mode, setMode] = createSignal<Mode>("normal");
+  const [selectedIndex, setSelectedIndex] = createSignal(0);
   const [statusMessage, setStatusMessage] = createSignal<string | undefined>();
-  const [searchQuery, setSearchQuery] = createSignal("");
   const [deleteTarget, setDeleteTarget] = createSignal<{
     id: string;
     name: string;
     path: string;
   } | null>(null);
-  const renderer = useRenderer();
-
-  const [explorerPath, setExplorerPath] = createSignal(getHomeDir());
-  const [explorerIndex, setExplorerIndex] = createSignal(0);
-  const explorerEntries = createMemo(() => listDirectory(explorerPath()));
-
-  const filteredProjects = createMemo(() => {
-    const query = searchQuery().toLowerCase();
-    if (!query) return projects();
-    return projects().filter(
-      (p) => p.name.toLowerCase().includes(query) || p.path.toLowerCase().includes(query),
-    );
-  });
 
   function showMessage(msg: string, duration = 2000) {
     setStatusMessage(msg);
@@ -58,17 +36,8 @@ export function App() {
   }
 
   function selectedProject() {
-    const list = filteredProjects();
-    if (list.length === 0) return null;
+    const list = search.filtered();
     return list[selectedIndex()] || null;
-  }
-
-  function moveUp() {
-    setSelectedIndex((i) => Math.max(0, i - 1));
-  }
-
-  function moveDown() {
-    setSelectedIndex((i) => Math.min(filteredProjects().length - 1, i + 1));
   }
 
   function exitApp() {
@@ -76,129 +45,112 @@ export function App() {
     process.exit(0);
   }
 
-  function handleOpen() {
-    const project = selectedProject();
-    if (!project) return;
-
-    if (!openInEditor(project.path)) {
-      showMessage("Set $EDITOR to open projects");
-      return;
-    }
-    updateLastAccessed(project.id);
-    handleSearchClear();
+  function resetSelection() {
+    setSelectedIndex(0);
   }
 
-  function handleLazygit() {
-    const project = selectedProject();
-    if (!project) return;
-    if (!project.git.isRepo) {
-      showMessage("Not a git repository");
-      return;
-    }
+  const actions = {
+    open() {
+      const project = selectedProject();
+      if (!project) return;
 
-    updateLastAccessed(project.id);
+      if (!openInEditor(project.path)) {
+        showMessage("Set $EDITOR to open projects");
+        return;
+      }
+      projects.updateLastAccessed(project.id);
+      search.clear();
+      resetSelection();
+    },
 
-    // Suspend TUI, open lazygit, then resume and refresh
-    renderer.suspend();
-    openLazygit(project.path);
-    renderer.resume();
-    refresh();
-  }
+    lazygit() {
+      const project = selectedProject();
+      if (!project) return;
+      if (!project.git.isRepo) {
+        showMessage("Not a git repository");
+        return;
+      }
 
-  function handleDelete() {
-    const project = selectedProject();
-    if (!project) return;
+      projects.updateLastAccessed(project.id);
+      renderer.suspend();
+      openLazygit(project.path);
+      renderer.resume();
+      projects.refresh();
+    },
 
-    // Enter delete confirmation mode
-    setDeleteTarget({ id: project.id, name: project.name, path: project.path });
-    setMode("delete-confirm");
-  }
+    startDelete() {
+      const project = selectedProject();
+      if (!project) return;
+      setDeleteTarget({ id: project.id, name: project.name, path: project.path });
+      setMode("delete-confirm");
+    },
 
-  function handleDeleteConfirm(alsoDeleteFiles: boolean) {
-    const target = deleteTarget();
-    if (!target) return;
+    confirmDelete(alsoDeleteFiles: boolean) {
+      const target = deleteTarget();
+      if (!target) return;
 
-    if (alsoDeleteFiles) {
-      if (!deleteDirectory(target.path)) {
+      if (alsoDeleteFiles && !deleteDirectory(target.path)) {
         showMessage(`Failed to delete files: ${target.path}`);
       }
-    }
 
-    if (removeProject(target.id)) {
-      showMessage(alsoDeleteFiles ? `Deleted: ${target.name}` : `Removed: ${target.name}`);
-      // Adjust selection if needed
-      if (selectedIndex() >= filteredProjects().length) {
-        setSelectedIndex(Math.max(0, filteredProjects().length - 1));
+      if (projects.removeProject(target.id)) {
+        showMessage(alsoDeleteFiles ? `Deleted: ${target.name}` : `Removed: ${target.name}`);
+        if (selectedIndex() >= search.filtered().length) {
+          setSelectedIndex(Math.max(0, search.filtered().length - 1));
+        }
       }
-    }
-    setDeleteTarget(null);
-    setMode("normal");
-  }
+      setDeleteTarget(null);
+      setMode("normal");
+    },
 
-  function handleDeleteCancel() {
-    setDeleteTarget(null);
-    setMode("normal");
-  }
+    cancelDelete() {
+      setDeleteTarget(null);
+      setMode("normal");
+    },
 
-  function getSelectedPath(): string | null {
-    const entries = explorerEntries();
-    const selected = entries[explorerIndex()];
-    if (!selected) return null;
-    return joinPath(explorerPath(), selected.name);
-  }
+    submitAdd() {
+      const path = explorer.getSelectedPath();
+      if (!path) {
+        showMessage("No directory selected");
+        return;
+      }
 
-  function handleAddSubmit() {
-    const path = getSelectedPath();
-    if (!path) {
-      showMessage("No directory selected");
-      return;
-    }
+      if (projects.addProject(path)) {
+        showMessage(`Added project: ${path}`);
+        setSelectedIndex(projects.projects().length - 1);
+      } else {
+        showMessage(projects.error() || "Failed to add project");
+        projects.clearError();
+      }
+      explorer.reset();
+      setMode("normal");
+    },
 
-    if (addProject(path)) {
-      showMessage(`Added project: ${path}`);
-      setSelectedIndex(projects().length - 1);
-    } else {
-      showMessage(error() || "Failed to add project");
-      clearError();
-    }
-    setExplorerPath(getHomeDir());
-    setExplorerIndex(0);
-    setMode("normal");
-  }
+    submitAddAll() {
+      const path = explorer.getSelectedPath();
+      if (!path) {
+        showMessage("No directory selected");
+        return;
+      }
 
-  function handleAddAllSubdirs() {
-    const path = getSelectedPath();
-    if (!path) {
-      showMessage("No directory selected");
-      return;
-    }
+      const result = projects.addAllSubdirs(path);
+      if (result.added > 0) {
+        const suffix = result.skipped > 0 ? `, ${result.skipped} skipped` : "";
+        showMessage(`Added ${result.added} project${result.added !== 1 ? "s" : ""}${suffix}`);
+      } else if (result.skipped > 0) {
+        showMessage(`All ${result.skipped} projects already exist`);
+      } else {
+        showMessage("No subdirectories found");
+      }
+      explorer.reset();
+      setMode("normal");
+    },
 
-    const result = addAllSubdirs(path);
-    if (result.added > 0) {
-      showMessage(
-        `Added ${result.added} project${result.added !== 1 ? "s" : ""}${result.skipped > 0 ? `, ${result.skipped} skipped` : ""}`,
-      );
-    } else if (result.skipped > 0) {
-      showMessage(`All ${result.skipped} projects already exist`);
-    } else {
-      showMessage("No subdirectories found");
-    }
-    setExplorerPath(getHomeDir());
-    setExplorerIndex(0);
-    setMode("normal");
-  }
-
-  function handleAddCancel() {
-    setExplorerPath(getHomeDir());
-    setExplorerIndex(0);
-    setMode("normal");
-  }
-
-  function handleSearchClear() {
-    setSearchQuery("");
-    setSelectedIndex(0);
-    setMode("normal");
-  }
+    cancelAdd() {
+      explorer.reset();
+      setMode("normal");
+    },
+  };
 
   useKeyboard((key) => {
     if (key.ctrl && key.name === "c") {
@@ -206,84 +158,106 @@ export function App() {
     }
 
     if (mode() === "add") {
-      const entries = explorerEntries();
-      if (key.name === "escape") {
-        handleAddCancel();
-      } else if (key.name === "return" && key.shift) {
-        handleAddAllSubdirs();
-      } else if (key.name === "return") {
-        handleAddSubmit();
-      } else if (key.name === "up" || key.name === "k") {
-        setExplorerIndex((i) => Math.max(0, i - 1));
-      } else if (key.name === "down" || key.name === "j") {
-        setExplorerIndex((i) => Math.min(entries.length - 1, i + 1));
-      } else if (key.name === "backspace" || key.name === "h" || key.name === "left") {
-        setExplorerPath(getParentDir(explorerPath()));
-        setExplorerIndex(0);
-      } else if (key.name === "l" || key.name === "right") {
-        const selected = entries[explorerIndex()];
-        if (selected && selected.isDirectory) {
-          setExplorerPath(joinPath(explorerPath(), selected.name));
-          setExplorerIndex(0);
-        }
+      switch (key.name) {
+        case "escape":
+          actions.cancelAdd();
+          break;
+        case "return":
+          if (key.shift) {
+            actions.submitAddAll();
+          } else {
+            actions.submitAdd();
+          }
+          break;
+        case "up":
+        case "k":
+          explorer.moveUp();
+          break;
+        case "down":
+        case "j":
+          explorer.moveDown();
+          break;
+        case "backspace":
+        case "h":
+        case "left":
+          explorer.navigateUp();
+          break;
+        case "l":
+        case "right":
+          explorer.navigateInto();
+          break;
       }
       return;
     }
 
     if (mode() === "delete-confirm") {
-      if (key.name === "escape" || key.name === "n") {
-        handleDeleteCancel();
-      } else if (key.name === "y") {
-        handleDeleteConfirm(false);
-      } else if (key.name === "d" && key.shift) {
-        handleDeleteConfirm(true);
+      switch (key.name) {
+        case "escape":
+        case "n":
+          actions.cancelDelete();
+          break;
+        case "y":
+          actions.confirmDelete(false);
+          break;
+        case "d":
+          if (key.shift) actions.confirmDelete(true);
+          break;
       }
       return;
     }
 
     if (mode() === "search") {
-      if (key.name === "escape") {
-        handleSearchClear();
-      } else if (key.name === "return") {
-        setMode("normal");
-      } else if (key.name === "backspace") {
-        setSearchQuery((prev) => prev.slice(0, -1));
-        setSelectedIndex(0);
-      } else if (key.sequence && key.sequence.length === 1 && !key.ctrl && !key.meta) {
-        setSearchQuery((prev) => prev + key.sequence);
-        setSelectedIndex(0);
+      switch (key.name) {
+        case "escape":
+          search.clear();
+          resetSelection();
+          setMode("normal");
+          break;
+        case "return":
+          setMode("normal");
+          break;
+        case "backspace":
+          search.backspace();
+          resetSelection();
+          break;
+        default:
+          if (key.sequence?.length === 1 && !key.ctrl && !key.meta) {
+            search.appendChar(key.sequence);
+            resetSelection();
+          }
       }
       return;
     }
 
     switch (key.name) {
       case "escape":
-        if (searchQuery()) {
-          handleSearchClear();
+        if (search.query()) {
+          search.clear();
+          resetSelection();
         }
         break;
       case "up":
       case "k":
-        moveUp();
+        setSelectedIndex((i) => Math.max(0, i - 1));
         break;
       case "down":
       case "j":
-        moveDown();
+        setSelectedIndex((i) => Math.min(search.filtered().length - 1, i + 1));
         break;
       case "return":
-        handleOpen();
+        actions.open();
         break;
       case "a":
         setMode("add");
         break;
       case "d":
-        handleDelete();
+        actions.startDelete();
         break;
       case "g":
-        handleLazygit();
+        actions.lazygit();
         break;
       case "r":
-        refresh();
+        projects.refresh();
         break;
       case "q":
         exitApp();
@@ -291,63 +265,37 @@ export function App() {
     }
 
     if (key.sequence === "/") {
+      search.start();
+      resetSelection();
       setMode("search");
-      setSearchQuery("");
-      setSelectedIndex(0);
     }
   });
 
   return (
     <box width="100%" height="100%" flexDirection="column" backgroundColor={colors.base}>
-      <Header loading={loading()} projectCount={filteredProjects().length} />
+      <Header loading={projects.loading()} projectCount={search.filtered().length} />
 
       <Show when={mode() === "add"}>
         <FileExplorer
-          currentPath={explorerPath()}
-          entries={explorerEntries()}
-          selectedIndex={explorerIndex()}
+          currentPath={explorer.path()}
+          entries={explorer.entries()}
+          selectedIndex={explorer.selectedIndex()}
         />
       </Show>
 
-      <Show when={mode() === "search" || searchQuery()}>
-        <box
-          height={1}
-          width="100%"
-          paddingLeft={1}
-          backgroundColor={colors.surface0}
-          flexDirection="row"
-        >
-          <text fg={colors.mauve}>/</text>
-          <text fg={colors.text}>{searchQuery()}</text>
-          <Show when={mode() === "search"}>
-            <text fg={colors.overlay0}>_</text>
-          </Show>
-          <Show when={mode() !== "search" && searchQuery()}>
-            <text fg={colors.overlay0}> (Esc to clear)</text>
-          </Show>
-        </box>
+      <Show when={mode() === "search" || search.query()}>
+        <SearchBar query={search.query()} isActive={mode() === "search"} />
       </Show>
 
       <Show when={mode() === "delete-confirm" && deleteTarget()}>
-        <box
-          height={1}
-          width="100%"
-          paddingLeft={1}
-          backgroundColor={colors.red}
-          flexDirection="row"
-        >
-          <text fg={colors.base}>Delete "{deleteTarget()?.name}"? </text>
-          <text fg={colors.base}>[y] Remove from list </text>
-          <text fg={colors.base}>[Shift+D] Delete from disk </text>
-          <text fg={colors.base}>[Esc] Cancel</text>
-        </box>
+        <DeleteConfirm name={deleteTarget()!.name} />
       </Show>
 
       <box flexGrow={1} width="100%" flexDirection="column">
-        <ProjectList projects={filteredProjects()} selectedIndex={selectedIndex()} />
+        <ProjectList projects={search.filtered()} selectedIndex={selectedIndex()} />
       </box>
 
-      <StatusBar message={statusMessage() || error() || undefined} />
+      <StatusBar message={statusMessage() || projects.error() || undefined} />
     </box>
   );
 }

@@ -46,9 +46,7 @@ export function ProjectList(props: ProjectListProps) {
         when={props.projects.length > 0}
         fallback={
           <box padding={2}>
-            <text fg={colors.overlay1}>
-              No projects yet. Press [a] to add one or run: devhub add {"<path>"}
-            </text>
+            <text fg={colors.overlay1}>No projects yet. Press [a] to add one.</text>
           </box>
         }
       >
