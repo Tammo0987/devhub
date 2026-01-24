@@ -1,9 +1,4 @@
-import {
-  loadProjects,
-  addProjectsFromDirectory,
-  removeProject,
-  findProjectByName,
-} from "./core";
+import { loadProjects, addProjectsFromDirectory, removeProject, findProjectByName } from "./core";
 
 const HELP = `
 devhub - A TUI project manager

@@ -1,53 +1,53 @@
-import { readdirSync, statSync, rmSync } from "fs"
-import { homedir } from "os"
-import { join, dirname } from "path"
-import type { DirEntry } from "../components/FileExplorer"
+import { readdirSync, rmSync } from "fs";
+import { homedir } from "os";
+import { join, dirname } from "path";
+import type { DirEntry } from "../components/FileExplorer";
 
 export function getHomeDir(): string {
-  return homedir()
+  return homedir();
 }
 
 export function listDirectory(path: string): DirEntry[] {
   try {
-    const entries = readdirSync(path, { withFileTypes: true })
-    
+    const entries = readdirSync(path, { withFileTypes: true });
+
     // Filter to directories only, sort alphabetically, hidden dirs last
     const dirs = entries
-      .filter(e => e.isDirectory())
-      .map(e => ({
+      .filter((e) => e.isDirectory())
+      .map((e) => ({
         name: e.name,
         isDirectory: true,
       }))
       .sort((a, b) => {
-        const aHidden = a.name.startsWith(".")
-        const bHidden = b.name.startsWith(".")
-        if (aHidden && !bHidden) return 1
-        if (!aHidden && bHidden) return -1
-        return a.name.localeCompare(b.name)
-      })
-    
-    return dirs
+        const aHidden = a.name.startsWith(".");
+        const bHidden = b.name.startsWith(".");
+        if (aHidden && !bHidden) return 1;
+        if (!aHidden && bHidden) return -1;
+        return a.name.localeCompare(b.name);
+      });
+
+    return dirs;
   } catch {
-    return []
+    return [];
   }
 }
 
 export function getParentDir(path: string): string {
-  const parent = dirname(path)
+  const parent = dirname(path);
   // Don't go above root
-  if (parent === path) return path
-  return parent
+  if (parent === path) return path;
+  return parent;
 }
 
 export function joinPath(base: string, name: string): string {
-  return join(base, name)
+  return join(base, name);
 }
 
 export function deleteDirectory(path: string): boolean {
   try {
-    rmSync(path, { recursive: true, force: true })
-    return true
+    rmSync(path, { recursive: true, force: true });
+    return true;
   } catch {
-    return false
+    return false;
   }
 }

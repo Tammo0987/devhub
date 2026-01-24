@@ -1,0 +1,23 @@
+{
+  "format_on_save": "on",
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["oxc", "vtsls", "!typescript-language-server", "!eslint"],
+      "formatter": {
+        "external": {
+          "command": "./node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
+    "TSX": {
+      "language_servers": ["oxc", "vtsls", "!typescript-language-server", "!eslint"],
+      "formatter": {
+        "external": {
+          "command": "./node_modules/.bin/oxfmt",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    }
+  }
+}

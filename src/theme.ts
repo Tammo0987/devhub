@@ -4,12 +4,12 @@ export const colors = {
   base: "#1e1e2e",
   mantle: "#181825",
   crust: "#11111b",
-  
+
   // Surface colors
   surface0: "#313244",
   surface1: "#45475a",
   surface2: "#585b70",
-  
+
   // Text colors
   text: "#cdd6f4",
   subtext1: "#bac2de",
@@ -17,7 +17,7 @@ export const colors = {
   overlay2: "#9399b2",
   overlay1: "#7f849c",
   overlay0: "#6c7086",
-  
+
   // Accent colors
   lavender: "#b4befe",
   blue: "#89b4fa",
@@ -33,4 +33,4 @@ export const colors = {
   pink: "#f5c2e7",
   flamingo: "#f2cdcd",
   rosewater: "#f5e0dc",
-}
+};

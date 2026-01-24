@@ -54,35 +54,35 @@ devhub help          # Show help
 
 ## Keybindings
 
-| Key | Action |
-|-----|--------|
-| `j` / `k` or `↑` / `↓` | Navigate list |
-| `Enter` | Open project in `$EDITOR` |
-| `/` | Search/filter projects |
-| `a` | Add projects (opens file explorer) |
-| `d` | Delete project |
-| `g` | Open lazygit |
-| `r` | Refresh git status |
-| `q` | Quit |
+| Key                    | Action                             |
+| ---------------------- | ---------------------------------- |
+| `j` / `k` or `↑` / `↓` | Navigate list                      |
+| `Enter`                | Open project in `$EDITOR`          |
+| `/`                    | Search/filter projects             |
+| `a`                    | Add projects (opens file explorer) |
+| `d`                    | Delete project                     |
+| `g`                    | Open lazygit                       |
+| `r`                    | Refresh git status                 |
+| `q`                    | Quit                               |
 
 ### File Explorer (Add Mode)
 
-| Key | Action |
-|-----|--------|
-| `j` / `k` or `↑` / `↓` | Navigate |
-| `l` / `→` | Enter directory |
-| `h` / `←` | Go to parent |
-| `Enter` | Add current directory |
-| `Shift+Enter` | Add all subdirectories |
-| `Esc` | Cancel |
+| Key                    | Action                 |
+| ---------------------- | ---------------------- |
+| `j` / `k` or `↑` / `↓` | Navigate               |
+| `l` / `→`              | Enter directory        |
+| `h` / `←`              | Go to parent           |
+| `Enter`                | Add current directory  |
+| `Shift+Enter`          | Add all subdirectories |
+| `Esc`                  | Cancel                 |
 
 ### Delete Confirmation
 
-| Key | Action |
-|-----|--------|
-| `y` | Remove from list only |
+| Key       | Action                 |
+| --------- | ---------------------- |
+| `y`       | Remove from list only  |
 | `Shift+D` | Delete files from disk |
-| `Esc` | Cancel |
+| `Esc`     | Cancel                 |
 
 ## Configuration
 

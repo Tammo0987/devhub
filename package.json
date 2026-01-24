@@ -2,15 +2,21 @@
   "name": "devhub",
   "version": "0.1.0",
   "description": "A TUI project manager with git integration",
-  "type": "module",
-  "main": "src/index.tsx",
   "bin": {
     "devhub": "./src/index.tsx"
   },
+  "type": "module",
+  "main": "src/index.tsx",
   "scripts": {
     "dev": "bun run src/index.tsx",
     "build": "bun run scripts/build.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint --fix .",
+    "format": "oxfmt --write .",
+    "format:check": "oxfmt .",
+    "check": "oxlint . && oxfmt .",
+    "check:fix": "oxlint --fix . && oxfmt --write ."
   },
   "dependencies": {
     "@opentui/core": "^0.1.74",
@@ -20,6 +26,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
+    "oxfmt": "^0.26.0",
+    "oxlint": "^1.41.0",
     "typescript": "^5.0.0"
   }
 }

@@ -1,24 +1,20 @@
-import { For, Show } from "solid-js"
-import { colors } from "../theme"
+import { For, Show } from "solid-js";
+import { colors } from "../theme";
 
 export interface DirEntry {
-  name: string
-  isDirectory: boolean
+  name: string;
+  isDirectory: boolean;
 }
 
 interface FileExplorerProps {
-  currentPath: string
-  entries: DirEntry[]
-  selectedIndex: number
+  currentPath: string;
+  entries: DirEntry[];
+  selectedIndex: number;
 }
 
 export function FileExplorer(props: FileExplorerProps) {
   return (
-    <box
-      flexDirection="column"
-      width="100%"
-      height="100%"
-    >
+    <box flexDirection="column" width="100%" height="100%">
       {/* Current path header */}
       <box
         height={1}
@@ -40,13 +36,13 @@ export function FileExplorer(props: FileExplorerProps) {
         flexDirection="row"
       >
         <text fg={colors.mauve}>[Enter]</text>
-        <text fg={colors.overlay0}> Add  </text>
+        <text fg={colors.overlay0}> Add </text>
         <text fg={colors.mauve}>[Shift+Enter]</text>
-        <text fg={colors.overlay0}> Add all  </text>
+        <text fg={colors.overlay0}> Add all </text>
         <text fg={colors.mauve}>[l/→]</text>
-        <text fg={colors.overlay0}> Open  </text>
+        <text fg={colors.overlay0}> Open </text>
         <text fg={colors.mauve}>[h/←]</text>
-        <text fg={colors.overlay0}> Back  </text>
+        <text fg={colors.overlay0}> Back </text>
         <text fg={colors.mauve}>[Esc]</text>
         <text fg={colors.overlay0}> Cancel</text>
       </box>
@@ -60,7 +56,7 @@ export function FileExplorer(props: FileExplorerProps) {
         </Show>
         <For each={props.entries}>
           {(entry, index) => {
-            const isSelected = () => index() === props.selectedIndex
+            const isSelected = () => index() === props.selectedIndex;
             return (
               <box
                 height={1}
@@ -76,10 +72,10 @@ export function FileExplorer(props: FileExplorerProps) {
                   {entry.isDirectory ? `${entry.name}/` : entry.name}
                 </text>
               </box>
-            )
+            );
           }}
         </For>
       </box>
     </box>
-  )
+  );
 }

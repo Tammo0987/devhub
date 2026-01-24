@@ -16,7 +16,6 @@ export function Header(props: HeaderProps) {
       paddingLeft={2}
       paddingTop={1}
     >
-      {/* Title */}
       <box flexDirection="row" height={1}>
         <text fg={colors.lavender}>Project Hub</text>
         <text fg={colors.overlay0}> • </text>
