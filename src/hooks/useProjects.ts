@@ -21,7 +21,6 @@ export function useProjects() {
     try {
       const rawProjects = loadProjects();
 
-      // Load git status for all projects in parallel
       const withStatus: ProjectWithStatus[] = await Promise.all(
         rawProjects.map(async (project) => {
           const git = await getGitStatus(project.path);
@@ -29,7 +28,6 @@ export function useProjects() {
         }),
       );
 
-      // Sort by lastAccessedAt (most recent first), then by name
       withStatus.sort((a, b) => {
         const aTime = a.lastAccessedAt ? new Date(a.lastAccessedAt).getTime() : 0;
         const bTime = b.lastAccessedAt ? new Date(b.lastAccessedAt).getTime() : 0;
@@ -88,7 +86,6 @@ export function useProjects() {
 
   function updateLastAccessed(id: string) {
     updateLastAccessedCore(id);
-    // Update local state without full refresh
     setProjects((prev) =>
       prev.map((p) => (p.id === id ? { ...p, lastAccessedAt: new Date().toISOString() } : p)),
     );

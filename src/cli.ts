@@ -23,7 +23,6 @@ export function runCli(args: string[]): boolean {
   const command = args[0];
 
   if (!command || command === "" || command.startsWith("-")) {
-    // Check for flags
     if (args.includes("-h") || args.includes("--help")) {
       console.log(HELP);
       return true;
@@ -32,7 +31,6 @@ export function runCli(args: string[]): boolean {
       console.log("devhub v0.1.0");
       return true;
     }
-    // No command = run TUI
     return false;
   }
 

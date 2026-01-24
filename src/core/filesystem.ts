@@ -11,7 +11,6 @@ export function listDirectory(path: string): DirEntry[] {
   try {
     const entries = readdirSync(path, { withFileTypes: true });
 
-    // Filter to directories only, sort alphabetically, hidden dirs last
     const dirs = entries
       .filter((e) => e.isDirectory())
       .map((e) => ({
@@ -34,7 +33,6 @@ export function listDirectory(path: string): DirEntry[] {
 
 export function getParentDir(path: string): string {
   const parent = dirname(path);
-  // Don't go above root
   if (parent === path) return path;
   return parent;
 }

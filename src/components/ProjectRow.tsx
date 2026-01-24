@@ -67,37 +67,30 @@ export function ProjectRow(props: ProjectRowProps) {
       paddingLeft={1}
       paddingRight={1}
     >
-      {/* Selection indicator */}
       <text width={2} fg={props.selected ? colors.mauve : undefined}>
         {props.selected ? ">" : " "}
       </text>
 
-      {/* Project name */}
       <text width={20} fg={nameColor()}>
         {props.project.name}
       </text>
 
-      {/* Last accessed */}
       <text width={10} fg={colors.lavender}>
         {relativeTime(props.project.lastAccessedAt)}
       </text>
 
-      {/* Branch */}
       <text width={14} fg={colors.blue}>
         {branchDisplay()}
       </text>
 
-      {/* Status icon */}
       <text width={6} fg={statusColor()}>
         {statusIcon()}
       </text>
 
-      {/* Ahead/behind */}
       <text width={8} fg={colors.peach}>
         {aheadBehind()}
       </text>
 
-      {/* Path */}
       <text flexGrow={1} fg={colors.overlay1}>
         {shortenPath(props.project.path)}
       </text>

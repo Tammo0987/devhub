@@ -34,13 +34,11 @@ export function saveProjects(projects: Project[]): void {
 }
 
 function addSingleProject(absolutePath: string, projects: Project[]): Project | null {
-  // Check if already exists
   const existing = projects.find((p) => p.path === absolutePath);
   if (existing) {
-    return null; // Skip, already exists
+    return null;
   }
 
-  // Check if path exists
   if (!existsSync(absolutePath)) {
     return null;
   }
@@ -66,20 +64,17 @@ export function addProjectsFromDirectory(inputPath: string): AddResult {
   const absolutePath = resolve(inputPath);
   const result: AddResult = { added: [], skipped: [], errors: [] };
 
-  // Check if path exists
   if (!existsSync(absolutePath)) {
     result.errors.push(`Path does not exist: ${absolutePath}`);
     return result;
   }
 
-  // Check if it's a directory
   const stat = statSync(absolutePath);
   if (!stat.isDirectory()) {
     result.errors.push(`Not a directory: ${absolutePath}`);
     return result;
   }
 
-  // Get all subdirectories
   const entries = readdirSync(absolutePath, { withFileTypes: true });
   const subdirs = entries.filter((e) => e.isDirectory() && !e.name.startsWith("."));
 
@@ -106,13 +101,11 @@ export function addProject(inputPath: string): Project {
   const projects = loadProjects();
   const absolutePath = resolve(inputPath);
 
-  // Check if already exists
   const existing = projects.find((p) => p.path === absolutePath);
   if (existing) {
     throw new Error(`Project already exists: ${existing.name}`);
   }
 
-  // Check if path exists
   if (!existsSync(absolutePath)) {
     throw new Error(`Path does not exist: ${absolutePath}`);
   }

@@ -15,7 +15,6 @@ interface FileExplorerProps {
 export function FileExplorer(props: FileExplorerProps) {
   return (
     <box flexDirection="column" width="100%" height="100%">
-      {/* Current path header */}
       <box
         height={1}
         width="100%"
@@ -27,7 +26,6 @@ export function FileExplorer(props: FileExplorerProps) {
         <text fg={colors.text}>{props.currentPath}</text>
       </box>
 
-      {/* Help bar */}
       <box
         height={1}
         width="100%"
@@ -47,7 +45,6 @@ export function FileExplorer(props: FileExplorerProps) {
         <text fg={colors.overlay0}> Cancel</text>
       </box>
 
-      {/* Directory listing */}
       <box flexDirection="column" width="100%" flexGrow={1}>
         <Show when={props.entries.length === 0}>
           <box paddingLeft={1}>

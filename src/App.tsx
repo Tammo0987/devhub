@@ -40,7 +40,6 @@ export function App() {
   } | null>(null);
   const renderer = useRenderer();
 
-  // File explorer state
   const [explorerPath, setExplorerPath] = createSignal(getHomeDir());
   const [explorerIndex, setExplorerIndex] = createSignal(0);
   const explorerEntries = createMemo(() => listDirectory(explorerPath()));
@@ -202,21 +201,17 @@ export function App() {
   }
 
   useKeyboard((key) => {
-    // Handle Ctrl+C always
     if (key.ctrl && key.name === "c") {
       exitApp();
     }
 
-    // Handle add mode - file explorer navigation
     if (mode() === "add") {
       const entries = explorerEntries();
       if (key.name === "escape") {
         handleAddCancel();
       } else if (key.name === "return" && key.shift) {
-        // Shift+Enter: Add all subdirectories
         handleAddAllSubdirs();
       } else if (key.name === "return") {
-        // Enter: Add current directory
         handleAddSubmit();
       } else if (key.name === "up" || key.name === "k") {
         setExplorerIndex((i) => Math.max(0, i - 1));
@@ -226,7 +221,6 @@ export function App() {
         setExplorerPath(getParentDir(explorerPath()));
         setExplorerIndex(0);
       } else if (key.name === "l" || key.name === "right") {
-        // Enter selected directory
         const selected = entries[explorerIndex()];
         if (selected && selected.isDirectory) {
           setExplorerPath(joinPath(explorerPath(), selected.name));
@@ -236,21 +230,17 @@ export function App() {
       return;
     }
 
-    // Handle delete confirmation mode
     if (mode() === "delete-confirm") {
       if (key.name === "escape" || key.name === "n") {
         handleDeleteCancel();
       } else if (key.name === "y") {
-        // y = remove from list only
         handleDeleteConfirm(false);
       } else if (key.name === "d" && key.shift) {
-        // Shift+D = also delete files
         handleDeleteConfirm(true);
       }
       return;
     }
 
-    // Handle search mode - manually handle typing
     if (mode() === "search") {
       if (key.name === "escape") {
         handleSearchClear();
@@ -266,10 +256,8 @@ export function App() {
       return;
     }
 
-    // Normal mode keybindings
     switch (key.name) {
       case "escape":
-        // Clear search filter if active
         if (searchQuery()) {
           handleSearchClear();
         }
@@ -302,7 +290,6 @@ export function App() {
         break;
     }
 
-    // "/" to start search
     if (key.sequence === "/") {
       setMode("search");
       setSearchQuery("");
@@ -312,10 +299,8 @@ export function App() {
 
   return (
     <box width="100%" height="100%" flexDirection="column" backgroundColor={colors.base}>
-      {/* Header */}
       <Header loading={loading()} projectCount={filteredProjects().length} />
 
-      {/* File explorer for add mode */}
       <Show when={mode() === "add"}>
         <FileExplorer
           currentPath={explorerPath()}
@@ -324,7 +309,6 @@ export function App() {
         />
       </Show>
 
-      {/* Search bar */}
       <Show when={mode() === "search" || searchQuery()}>
         <box
           height={1}
@@ -344,7 +328,6 @@ export function App() {
         </box>
       </Show>
 
-      {/* Delete confirmation */}
       <Show when={mode() === "delete-confirm" && deleteTarget()}>
         <box
           height={1}
@@ -360,12 +343,10 @@ export function App() {
         </box>
       </Show>
 
-      {/* Main content */}
       <box flexGrow={1} width="100%" flexDirection="column">
         <ProjectList projects={filteredProjects()} selectedIndex={selectedIndex()} />
       </box>
 
-      {/* Status bar */}
       <StatusBar message={statusMessage() || error() || undefined} />
     </box>
   );
