@@ -1,3 +1,5 @@
+import packageJson from "../../package.json";
+
 export const HELP = `
 devhub - A TUI project manager
 
@@ -17,4 +19,4 @@ Examples:
   devhub add .             Add all projects in current directory
 `;
 
-export const VERSION = "0.1.0";
+export const VERSION = packageJson.version;

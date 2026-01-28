@@ -10,7 +10,7 @@
   languages.typescript.enable = true;
 
   enterShell = ''
-    echo "🚀 Project Hub dev environment"
+    echo "Devhub dev environment"
     echo ""
     echo "Commands:"
     echo "  bun install    - Install dependencies"
