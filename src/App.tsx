@@ -59,8 +59,7 @@ export function App() {
         return;
       }
       projects.updateLastAccessed(project.id);
-      search.clear();
-      resetSelection();
+      exitApp();
     },
 
     lazygit() {
