@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "child_process";
-import { getEditor } from "./paths";
+import { getEditor, getCodingAgent } from "./paths";
 
 export function openInEditor(path: string): boolean {
   const editor = getEditor();
@@ -21,4 +21,17 @@ export function openLazygit(path: string): void {
     cwd: path,
     stdio: "inherit",
   });
+}
+
+export function openCodingAgent(path: string): boolean {
+  const agent = getCodingAgent();
+  if (!agent) {
+    return false;
+  }
+
+  spawnSync(agent, [], {
+    cwd: path,
+    stdio: "inherit",
+  });
+  return true;
 }

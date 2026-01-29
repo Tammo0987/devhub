@@ -9,7 +9,8 @@ import {
   DeleteConfirm,
 } from "./components";
 import { useProjects, useFileExplorer, useSearch } from "./hooks";
-import { openInEditor, openLazygit } from "./core/editor";
+import { openInEditor, openLazygit, openCodingAgent } from "./core/editor";
+import { getCodingAgent } from "./core/paths";
 import { deleteDirectory } from "./core/filesystem";
 import { colors } from "./theme";
 
@@ -73,6 +74,22 @@ export function App() {
       projects.updateLastAccessed(project.id);
       renderer.suspend();
       openLazygit(project.path);
+      renderer.resume();
+      projects.refresh();
+    },
+
+    codingAgent() {
+      const project = selectedProject();
+      if (!project) return;
+
+      if (!getCodingAgent()) {
+        showMessage("Set $DEVHUB_AGENT to your coding agent command");
+        return;
+      }
+
+      projects.updateLastAccessed(project.id);
+      renderer.suspend();
+      openCodingAgent(project.path);
       renderer.resume();
       projects.refresh();
     },
@@ -254,6 +271,9 @@ export function App() {
         break;
       case "g":
         actions.lazygit();
+        break;
+      case "c":
+        actions.codingAgent();
         break;
       case "r":
         projects.refresh();

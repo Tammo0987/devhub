@@ -17,6 +17,10 @@ export function getEditor(): string | null {
   return process.env.EDITOR || process.env.VISUAL || null;
 }
 
+export function getCodingAgent(): string | null {
+  return process.env.DEVHUB_AGENT || null;
+}
+
 export function shortenPath(path: string): string {
   const home = homedir();
   if (path.startsWith(home)) {
