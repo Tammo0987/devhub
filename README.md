@@ -10,6 +10,7 @@ A terminal UI project manager with git integration, built with Bun, SolidJS, and
 - **File Explorer** - Browse directories to add new projects
 - **Editor Integration** - Open projects in your `$EDITOR`
 - **Lazygit Integration** - Quick access to git operations
+- **Coding Agent Integration** - Launch AI coding agents (Claude Code, Codex, etc.) in project directories
 
 ![DevHub TUI](assets/devhub.png)
 
@@ -33,16 +34,33 @@ bun install
 bun dev
 ```
 
+### Using Nix Flake
+
+```bash
+nix run github:Tammo0987/devhub   # try it
+nix shell github:Tammo0987/devhub # or add to shell
+```
+
+Add to your flake inputs:
+
+```nix
+inputs.devhub.url = "github:Tammo0987/devhub";
+```
+
+Then add `devhub.packages.${pkgs.system}.default` to `environment.systemPackages` (NixOS) or `home.packages` (Home Manager).
+
 ### Using devenv
 
 This project includes a [devenv](https://devenv.sh) configuration that sets up all required dependencies.
 
 With direnv:
+
 ```bash
 direnv allow
 ```
 
 Without direnv:
+
 ```bash
 devenv shell
 ```
@@ -66,16 +84,17 @@ devhub help          # Show help
 
 ## Keybindings
 
-| Key                    | Action                             |
-| ---------------------- | ---------------------------------- |
-| `j` / `k` or `↑` / `↓` | Navigate list                      |
-| `Enter`                | Open project in `$EDITOR`          |
-| `/`                    | Search/filter projects             |
-| `a`                    | Add projects (opens file explorer) |
-| `d`                    | Delete project                     |
-| `g`                    | Open lazygit                       |
-| `r`                    | Refresh git status                 |
-| `q`                    | Quit                               |
+| Key                    | Action                              |
+| ---------------------- | ----------------------------------- |
+| `j` / `k` or `↑` / `↓` | Navigate list                       |
+| `Enter`                | Open project in `$EDITOR`           |
+| `/`                    | Search/filter projects              |
+| `a`                    | Add projects (opens file explorer)  |
+| `d`                    | Delete project                      |
+| `g`                    | Open lazygit                        |
+| `c`                    | Open coding agent (`$DEVHUB_AGENT`) |
+| `r`                    | Refresh git status                  |
+| `q`                    | Quit                                |
 
 ### File Explorer (Add Mode)
 
@@ -100,7 +119,12 @@ devhub help          # Show help
 
 Projects are stored at `~/.config/devhub/projects.json`.
 
-The editor is determined by `$EDITOR` environment variable.
+### Environment Variables
+
+| Variable       | Description                                             |
+| -------------- | ------------------------------------------------------- |
+| `EDITOR`       | Editor to open projects with (required for `Enter` key) |
+| `DEVHUB_AGENT` | Coding agent command (e.g., `claude` or `codex`)        |
 
 ## Tech Stack
 
