@@ -4,7 +4,8 @@ import { App } from "./App";
 import { runCli } from "./cli";
 
 const args = process.argv.slice(2);
+const result = runCli(args);
 
-if (!runCli(args)) {
-  render(() => <App />);
+if (!result.handled && result.rootDir) {
+  render(() => <App initialRootDir={result.rootDir!} />);
 }

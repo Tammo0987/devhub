@@ -23,10 +23,8 @@ export function StatusBar(props: StatusBarProps) {
         <text fg={colors.overlay1}> Open </text>
         <text fg={colors.mauve}>[/]</text>
         <text fg={colors.overlay1}> Search </text>
-        <text fg={colors.mauve}>[a]</text>
-        <text fg={colors.overlay1}> Add </text>
-        <text fg={colors.mauve}>[d]</text>
-        <text fg={colors.overlay1}> Delete </text>
+        <text fg={colors.mauve}>[b]</text>
+        <text fg={colors.overlay1}> Browse </text>
         <text fg={colors.mauve}>[g]</text>
         <text fg={colors.overlay1}> Git </text>
         <text fg={colors.mauve}>[c]</text>

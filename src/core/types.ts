@@ -1,13 +1,15 @@
 export interface Project {
-  id: string;
   name: string;
   path: string;
-  addedAt: string;
   lastAccessedAt?: string;
 }
 
-export interface ProjectsData {
-  projects: Project[];
+export interface ProjectMetadata {
+  lastAccessedAt?: string;
+}
+
+export interface DevHubConfig {
+  projects: Record<string, ProjectMetadata>;
 }
 
 export interface GitStatus {

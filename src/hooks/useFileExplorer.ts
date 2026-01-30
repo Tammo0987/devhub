@@ -1,14 +1,15 @@
 import { createSignal, createMemo } from "solid-js";
+import { basename } from "path";
 import { getHomeDir, listDirectory, getParentDir, joinPath } from "../core/filesystem";
 
-export function useFileExplorer() {
-  const [path, setPath] = createSignal(getHomeDir());
+export function useFileExplorer(initialPath?: string) {
+  const [path, setPath] = createSignal(initialPath || getHomeDir());
   const [selectedIndex, setSelectedIndex] = createSignal(0);
 
   const entries = createMemo(() => listDirectory(path()));
 
-  function reset() {
-    setPath(getHomeDir());
+  function reset(newPath?: string) {
+    setPath(newPath || getHomeDir());
     setSelectedIndex(0);
   }
 
@@ -21,8 +22,13 @@ export function useFileExplorer() {
   }
 
   function navigateUp() {
-    setPath(getParentDir(path()));
-    setSelectedIndex(0);
+    const currentDir = basename(path());
+    const parentPath = getParentDir(path());
+    setPath(parentPath);
+
+    const parentEntries = listDirectory(parentPath);
+    const index = parentEntries.findIndex((e) => e.name === currentDir);
+    setSelectedIndex(index >= 0 ? index : 0);
   }
 
   function navigateInto() {
@@ -39,6 +45,10 @@ export function useFileExplorer() {
     return joinPath(path(), selected.name);
   }
 
+  function getCurrentPath(): string {
+    return path();
+  }
+
   return {
     path,
     entries,
@@ -49,5 +59,6 @@ export function useFileExplorer() {
     navigateUp,
     navigateInto,
     getSelectedPath,
+    getCurrentPath,
   };
 }

@@ -22,7 +22,7 @@ export function FileExplorer(props: FileExplorerProps) {
         backgroundColor={colors.surface0}
         flexDirection="row"
       >
-        <text fg={colors.green}>+ </text>
+        <text fg={colors.overlay0}>Current: </text>
         <text fg={colors.text}>{props.currentPath}</text>
       </box>
 
@@ -34,9 +34,7 @@ export function FileExplorer(props: FileExplorerProps) {
         flexDirection="row"
       >
         <text fg={colors.mauve}>[Enter]</text>
-        <text fg={colors.overlay0}> Add </text>
-        <text fg={colors.mauve}>[Shift+Enter]</text>
-        <text fg={colors.overlay0}> Add all </text>
+        <text fg={colors.overlay0}> Select </text>
         <text fg={colors.mauve}>[l/→]</text>
         <text fg={colors.overlay0}> Open </text>
         <text fg={colors.mauve}>[h/←]</text>

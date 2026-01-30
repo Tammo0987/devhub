@@ -1,42 +1,38 @@
 import { HELP, VERSION } from "./constants";
-import { addCommand } from "./add";
-import { listCommand } from "./list";
-import { removeCommand } from "./remove";
+import { resolveRootDir } from "../core/config";
 
-export function runCli(args: string[]): boolean {
+export interface CliResult {
+  handled: boolean;
+  rootDir?: string;
+}
+
+export function runCli(args: string[]): CliResult {
   const command = args[0];
 
-  if (!command || command === "" || command.startsWith("-")) {
-    if (args.includes("-h") || args.includes("--help")) {
-      console.log(HELP);
-      return true;
-    }
-    if (args.includes("-v") || args.includes("--version")) {
-      console.log(`devhub v${VERSION}`);
-      return true;
-    }
-    return false;
+  if (args.includes("-h") || args.includes("--help")) {
+    console.log(HELP);
+    return { handled: true };
+  }
+
+  if (args.includes("-v") || args.includes("--version")) {
+    console.log(`devhub v${VERSION}`);
+    return { handled: true };
+  }
+
+  if (!command || command === "") {
+    return { handled: false, rootDir: resolveRootDir() };
   }
 
   switch (command) {
     case "help":
       console.log(HELP);
-      return true;
-
-    case "add":
-      addCommand(args[1]);
-      return true;
-
-    case "list":
-      listCommand();
-      return true;
-
-    case "remove":
-      removeCommand(args[1]);
-      return true;
+      return { handled: true };
 
     default:
-      console.error(`Unknown command: ${command}`);
+      if (!command.startsWith("-")) {
+        return { handled: false, rootDir: resolveRootDir(command) };
+      }
+      console.error(`Unknown option: ${command}`);
       console.log(HELP);
       process.exit(1);
   }
