@@ -59,23 +59,30 @@ export function App(props: AppProps) {
     <box width="100%" height="100%" flexDirection="column" backgroundColor={colors.base}>
       <Header loading={projects.loading()} projectCount={search.filtered().length} />
 
-      <Show when={mode() === "browse"}>
-        <FileExplorer
-          currentPath={explorer.path()}
-          entries={explorer.entries()}
-          selectedIndex={explorer.selectedIndex()}
-        />
+      <Show
+        when={mode() !== "browse"}
+        fallback={
+          <FileExplorer
+            currentPath={explorer.path()}
+            entries={explorer.entries()}
+            selectedIndex={explorer.selectedIndex()}
+          />
+        }
+      >
+        <Show when={mode() === "search" || search.query()}>
+          <SearchBar query={search.query()} isActive={mode() === "search"} />
+        </Show>
+
+        <box flexGrow={1} width="100%" flexDirection="column">
+          <ProjectList
+            projects={search.filtered()}
+            selectedIndex={selectedIndex()}
+            searchBarVisible={mode() === "search" || !!search.query()}
+          />
+        </box>
       </Show>
 
-      <Show when={mode() === "search" || search.query()}>
-        <SearchBar query={search.query()} isActive={mode() === "search"} />
-      </Show>
-
-      <box flexGrow={1} width="100%" flexDirection="column">
-        <ProjectList projects={search.filtered()} selectedIndex={selectedIndex()} />
-      </box>
-
-      <StatusBar message={statusMessage() || projects.error() || undefined} />
+      <StatusBar mode={mode()} message={statusMessage() || projects.error() || undefined} />
     </box>
   );
 }

@@ -1,8 +1,10 @@
-import { Show } from "solid-js";
+import { Match, Show, Switch } from "solid-js";
 import { colors } from "../theme";
+import { KeyHint } from "./KeyHint";
 
 interface StatusBarProps {
   message?: string;
+  mode: "normal" | "browse" | "search";
 }
 
 export function StatusBar(props: StatusBarProps) {
@@ -19,20 +21,23 @@ export function StatusBar(props: StatusBarProps) {
         <text fg={colors.yellow}>{props.message}</text>
       </Show>
       <Show when={!props.message}>
-        <text fg={colors.mauve}>[Enter]</text>
-        <text fg={colors.overlay1}> Open </text>
-        <text fg={colors.mauve}>[/]</text>
-        <text fg={colors.overlay1}> Search </text>
-        <text fg={colors.mauve}>[b]</text>
-        <text fg={colors.overlay1}> Browse </text>
-        <text fg={colors.mauve}>[g]</text>
-        <text fg={colors.overlay1}> Git </text>
-        <text fg={colors.mauve}>[c]</text>
-        <text fg={colors.overlay1}> Agent </text>
-        <text fg={colors.mauve}>[r]</text>
-        <text fg={colors.overlay1}> Refresh </text>
-        <text fg={colors.mauve}>[q]</text>
-        <text fg={colors.overlay1}> Quit</text>
+        <Switch>
+          <Match when={props.mode === "browse"}>
+            <KeyHint keys="Enter" label="Select" />
+            <KeyHint keys="l/→" label="Open" />
+            <KeyHint keys="h/←" label="Back" />
+            <KeyHint keys="Esc" label="Cancel" />
+          </Match>
+          <Match when={props.mode === "normal" || props.mode === "search"}>
+            <KeyHint keys="Enter" label="Open" />
+            <KeyHint keys="/" label="Search" />
+            <KeyHint keys="b" label="Browse" />
+            <KeyHint keys="g" label="Git" />
+            <KeyHint keys="c" label="Agent" />
+            <KeyHint keys="r" label="Refresh" />
+            <KeyHint keys="q" label="Quit" />
+          </Match>
+        </Switch>
       </Show>
     </box>
   );

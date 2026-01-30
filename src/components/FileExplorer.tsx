@@ -1,5 +1,6 @@
 import { For, Show } from "solid-js";
 import { colors } from "../theme";
+import { useScrollableList } from "../hooks";
 
 export interface DirEntry {
   name: string;
@@ -12,7 +13,16 @@ interface FileExplorerProps {
   selectedIndex: number;
 }
 
+// Fixed heights: header(1) + status(1) + path bar(1) + margins(2) = 5
+const FIXED_HEIGHTS = 5;
+
 export function FileExplorer(props: FileExplorerProps) {
+  const { visibleItems, scrollOffset } = useScrollableList({
+    items: () => props.entries,
+    selectedIndex: () => props.selectedIndex,
+    fixedHeights: () => FIXED_HEIGHTS,
+  });
+
   return (
     <box flexDirection="column" width="100%" height="100%">
       <box
@@ -26,32 +36,15 @@ export function FileExplorer(props: FileExplorerProps) {
         <text fg={colors.text}>{props.currentPath}</text>
       </box>
 
-      <box
-        height={1}
-        width="100%"
-        paddingLeft={1}
-        backgroundColor={colors.mantle}
-        flexDirection="row"
-      >
-        <text fg={colors.mauve}>[Enter]</text>
-        <text fg={colors.overlay0}> Select </text>
-        <text fg={colors.mauve}>[l/→]</text>
-        <text fg={colors.overlay0}> Open </text>
-        <text fg={colors.mauve}>[h/←]</text>
-        <text fg={colors.overlay0}> Back </text>
-        <text fg={colors.mauve}>[Esc]</text>
-        <text fg={colors.overlay0}> Cancel</text>
-      </box>
-
       <box flexDirection="column" width="100%" flexGrow={1}>
         <Show when={props.entries.length === 0}>
           <box paddingLeft={1}>
             <text fg={colors.overlay0}>Empty directory</text>
           </box>
         </Show>
-        <For each={props.entries}>
+        <For each={visibleItems()}>
           {(entry, index) => {
-            const isSelected = () => index() === props.selectedIndex;
+            const isSelected = () => index() + scrollOffset() === props.selectedIndex;
             return (
               <box
                 height={1}
