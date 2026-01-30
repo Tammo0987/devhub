@@ -11,6 +11,7 @@ A terminal UI project manager with git integration, built with Bun, SolidJS, and
 - **Editor Integration** - Open projects in your `$EDITOR`
 - **Lazygit Integration** - Quick access to git operations
 - **Coding Agent Integration** - Launch AI coding agents (Claude Code, Codex, etc.) in project directories
+- **Terminal Integration** - Spawn a shell directly in any project directory
 
 ![DevHub TUI](assets/devhub.png)
 
@@ -76,10 +77,9 @@ devhub
 ### CLI Commands
 
 ```bash
-devhub add <path>    # Add all git repos inside a directory
-devhub list          # List all projects
-devhub remove <id>   # Remove a project by ID or name
+devhub [path]        # Open TUI with projects from path (default: current dir)
 devhub help          # Show help
+devhub -v            # Show version
 ```
 
 ## Keybindings
@@ -89,42 +89,35 @@ devhub help          # Show help
 | `j` / `k` or `↑` / `↓` | Navigate list                       |
 | `Enter`                | Open project in `$EDITOR`           |
 | `/`                    | Search/filter projects              |
-| `a`                    | Add projects (opens file explorer)  |
-| `d`                    | Delete project                      |
+| `b`                    | Browse (opens file explorer)        |
 | `g`                    | Open lazygit                        |
 | `c`                    | Open coding agent (`$DEVHUB_AGENT`) |
+| `t`                    | Open terminal (`$SHELL`)            |
 | `r`                    | Refresh git status                  |
 | `q`                    | Quit                                |
 
-### File Explorer (Add Mode)
+### File Explorer (Browse Mode)
 
-| Key                    | Action                 |
-| ---------------------- | ---------------------- |
-| `j` / `k` or `↑` / `↓` | Navigate               |
-| `l` / `→`              | Enter directory        |
-| `h` / `←`              | Go to parent           |
-| `Enter`                | Add current directory  |
-| `Shift+Enter`          | Add all subdirectories |
-| `Esc`                  | Cancel                 |
-
-### Delete Confirmation
-
-| Key       | Action                 |
-| --------- | ---------------------- |
-| `y`       | Remove from list only  |
-| `Shift+D` | Delete files from disk |
-| `Esc`     | Cancel                 |
+| Key                    | Action              |
+| ---------------------- | ------------------- |
+| `j` / `k` or `↑` / `↓` | Navigate            |
+| `l` / `→`              | Enter directory     |
+| `h` / `←`              | Go to parent        |
+| `Enter`                | Select as root      |
+| `Esc`                  | Cancel              |
 
 ## Configuration
 
-Projects are stored at `~/.config/devhub/projects.json`.
+Project metadata is stored at `<rootDir>/.devhub/config.json`.
 
 ### Environment Variables
 
 | Variable       | Description                                             |
 | -------------- | ------------------------------------------------------- |
+| `DEVHUB_ROOT`  | Default root directory for projects                     |
 | `EDITOR`       | Editor to open projects with (required for `Enter` key) |
 | `DEVHUB_AGENT` | Coding agent command (e.g., `claude` or `codex`)        |
+| `SHELL`        | Shell for terminal spawning (defaults to `/bin/sh`)     |
 
 ## Tech Stack
 
