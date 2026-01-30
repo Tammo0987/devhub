@@ -34,6 +34,7 @@ export function StatusBar(props: StatusBarProps) {
             <KeyHint keys="b" label="Browse" />
             <KeyHint keys="g" label="Git" />
             <KeyHint keys="c" label="Agent" />
+            <KeyHint keys="t" label="Term" />
             <KeyHint keys="r" label="Refresh" />
             <KeyHint keys="q" label="Quit" />
           </Match>

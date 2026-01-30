@@ -1,7 +1,7 @@
 import { useKeyboard, useRenderer } from "@opentui/solid";
 import type { Accessor, Setter } from "solid-js";
 import type { ProjectWithStatus } from "../core/types";
-import { openInEditor, openLazygit, openCodingAgent } from "../core/editor";
+import { openInEditor, openLazygit, openCodingAgent, openTerminal } from "../core/editor";
 import { getCodingAgent } from "../core/paths";
 
 type Mode = "normal" | "browse" | "search";
@@ -111,6 +111,17 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
       projects.refresh();
     },
 
+    terminal() {
+      const project = selectedProject();
+      if (!project) return;
+
+      projects.updateLastAccessed(project.name);
+      renderer.suspend();
+      openTerminal(project.path);
+      renderer.resume();
+      projects.refresh();
+    },
+
     startBrowse() {
       explorer.reset(rootDir());
       setMode("browse");
@@ -214,6 +225,9 @@ export function useKeyboardHandler(options: KeyboardHandlerOptions) {
         break;
       case "c":
         actions.codingAgent();
+        break;
+      case "t":
+        actions.terminal();
         break;
       case "r":
         projects.refresh();

@@ -35,3 +35,11 @@ export function openCodingAgent(path: string): boolean {
   });
   return true;
 }
+
+export function openTerminal(path: string): void {
+  const shell = process.env.SHELL || "/bin/sh";
+  spawnSync(shell, [], {
+    cwd: path,
+    stdio: "inherit",
+  });
+}
