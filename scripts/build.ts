@@ -20,6 +20,7 @@ const result = await Bun.build({
   outdir,
   plugins: [solidPlugin],
   minify: true,
+  external: ["@opentui/core-*"],
 });
 
 if (!result.success) {
@@ -37,7 +38,16 @@ console.log(`Output: ${outdir}/index.js`);
 console.log("\nCompiling to standalone binary...");
 
 const proc = Bun.spawn(
-  ["bun", "build", "--compile", `${outdir}/index.js`, "--outfile", `${outdir}/devhub`],
+  [
+    "bun",
+    "build",
+    "--compile",
+    "--external",
+    "@opentui/core-*",
+    `${outdir}/index.js`,
+    "--outfile",
+    `${outdir}/devhub`,
+  ],
   {
     stdout: "inherit",
     stderr: "inherit",
