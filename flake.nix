@@ -40,7 +40,7 @@
 
           outputHashAlgo = "sha256";
           outputHashMode = "recursive";
-          outputHash = "sha256-pj9NF631jpzCW9AmTXCAcmljzRw7uyqfb6vzb1UUvhs=";
+          outputHash = "sha256-3BSnjIDvHP1Sl9At52iVHpw17L6BmGAFhUAvEhihK3c=";
         };
       in
       {
