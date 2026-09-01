@@ -49,7 +49,10 @@
           inherit version;
           src = ./.;
 
-          nativeBuildInputs = [ pkgs.bun ];
+          nativeBuildInputs = [
+            pkgs.bun
+            pkgs.makeWrapper
+          ];
 
           buildPhase = ''
             export HOME=$TMPDIR
@@ -59,8 +62,11 @@
           '';
 
           installPhase = ''
-            mkdir -p $out/bin
-            cp dist/devhub $out/bin/
+            mkdir -p $out/bin $out/lib/devhub/node_modules
+            cp -r node_modules/@opentui $out/lib/devhub/node_modules/
+            cp dist/devhub $out/lib/devhub/devhub
+            makeWrapper $out/lib/devhub/devhub $out/bin/devhub \
+              --set NODE_PATH $out/lib/devhub/node_modules
           '';
 
           meta = with pkgs.lib; {
