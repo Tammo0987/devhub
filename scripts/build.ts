@@ -42,6 +42,7 @@ const proc = Bun.spawn(
     "bun",
     "build",
     "--compile",
+    "--no-compile-autoload-bunfig",
     "--external",
     "@opentui/core-*",
     `${outdir}/index.js`,
